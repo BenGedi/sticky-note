@@ -1,0 +1,37 @@
+@import "../../css/reset.css";
+@import "../../css/main.css";
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: #3d546e;
+  align-items: center;
+}
+header button {
+  cursor: pointer;
+  font-size: 3rem;
+}
+
+.notes {
+  padding: 2rem;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.notes > div {
+  transition: opacity .3s ease-in-out;
+}
+
+button {
+  transition-property: text-shadow, box-shadow; 
+  transition-duration: .3s; 
+  transition-timing-function: ease-in-out;
+  cursor: pointer;
+}
+
+button:hover {
+  text-shadow: 0px 0px 8px #000000;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="os-default">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticky Notes - Notes</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/x-icon" href="https://www.google.com/s2/favicons?domain=www.simplestickynotes.com/">
+</head>
+<body>
+  <header>
+    <h1>Boards</h1>
+    <ul>
+    <% boards.forEach((board) => {%>
+      <li>
+        <a href="/board/<%= board.id %>/"><%= board.name %></a>
+      </li>
+      <% }) %>
+    </ul>
+  </header>
+</body>
+</html>
