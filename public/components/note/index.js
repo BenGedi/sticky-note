@@ -11,6 +11,7 @@ export class Note extends HTMLElement {
     this._mouseMove =     this._mouseMove.bind(this);
     this._setColors =     this._setColors.bind(this);
     this._removeNote =    this._removeNote.bind(this);
+    this._setPosition =   this._setPosition.bind(this);
     this._onChangeColor = this._onChangeColor.bind(this);
 
     this._render();
@@ -68,9 +69,7 @@ export class Note extends HTMLElement {
     const posY = parseInt(y, 10);
     if (isNaN(posX) || isNaN(posY)) return;
     
-    this.style.top = y;
-    this.style.left = x;
-    this.style.position = 'absolute';
+    this._setPosition(x,y);
   }
 
   connectedCallback() {
@@ -102,10 +101,7 @@ export class Note extends HTMLElement {
     const positionY = this.offsetTop + newPosY;
 
     // set the element's new position:
-    this.style.left = (positionX) + "px";
-    this.style.top = (positionY) + "px";
-    this.style.position = 'absolute';
-    this.style.zIndex = 1;
+    this._setPosition(positionX + "px",positionY + "px");
     this.style.opacity = .5;
   }
   
@@ -166,6 +162,13 @@ export class Note extends HTMLElement {
     this.style.setProperty("--font-color", fontColor);
     
     this._noteColorElm.value = value;
+  }
+
+  _setPosition(x, y) {
+    this.style.top = y;
+    this.style.left = x;
+    this.style.position = 'absolute';
+    this.style.zIndex = 1;
   }
 
   _render() {
