@@ -1,4 +1,3 @@
-import { removeNote, updateNote } from "../../api/index.js";
 import { debounce, isLightColor } from "../../utils/index.js";
 
 export class Note extends HTMLElement {
