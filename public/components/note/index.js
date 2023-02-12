@@ -13,11 +13,6 @@ export class Note extends HTMLElement {
     this._removeNote =   this._removeNote.bind(this);
     this._onChangeColor = this._onChangeColor.bind(this);
 
-    // this.color =    this.getAttribute('color');
-    // this.content =  this.getAttribute('content');
-    // this.boardId =  this.getAttribute('boardId');
-    // this.position = this.getAttribute('position')?.split(',');
-
     this._render();
 
     this._moveBtn =      this.shadowRoot.getElementById('moveBtn');
@@ -73,8 +68,13 @@ export class Note extends HTMLElement {
   connectedCallback() {
     this._removeBtn.addEventListener('click', this._removeNote);
     this._contentElm.addEventListener('input', debounce(this._onUpdate), 500);
-    this._noteColorElm.addEventListener('change', this.onChangeColor);
+    this._noteColorElm.addEventListener('change', this._onChangeColor);
     this._moveBtn.addEventListener('mousedown', this._mouseDown);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('mousemove', this._mouseMove);
+    document.removeEventListener('mouseup', this._mouseUp);
   }
 
   _mouseDown() {
@@ -113,10 +113,6 @@ export class Note extends HTMLElement {
     document.removeEventListener('mouseup', this._mouseUp);
   }
 
-  disconnectedCallback() {
-    document.removeEventListener('mousemove', this._mouseMove);
-    document.removeEventListener('mouseup', this._mouseUp);
-  }
   _removeNote() {
     const removeEvent = new CustomEvent('removenote', {
       detail: {
@@ -131,7 +127,7 @@ export class Note extends HTMLElement {
   async _onUpdate() {
     const noteData = { 
       content: this._contentElm.textContent, 
-      color: this.color, 
+      color: this._noteColorElm.value, 
       position: this.position
     };
 
@@ -150,7 +146,8 @@ export class Note extends HTMLElement {
   }
 
   async _onChangeColor(event) {
-    this.color = event.target.value;
+    const value = event.target.value;
+    this.color = value;
     this._onUpdate();
   }
 

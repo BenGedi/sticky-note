@@ -17,6 +17,10 @@
   color: var(--font-color, black);
   background-color: var(--note-bg-color, yellow);
   position: relative;
+
+  transition-property: color, background-color; 
+  transition-duration: .3s; 
+  transition-timing-function: ease-in-out;
 }
 
 .note:hover footer {
