@@ -11,7 +11,7 @@ export class Note extends HTMLElement {
     this._mouseDown =    this._mouseDown.bind(this);
     this._mouseMove =    this._mouseMove.bind(this);
     this._removeNote =   this._removeNote.bind(this);
-    this.onChangeColor = this.onChangeColor.bind(this);
+    this._onChangeColor = this._onChangeColor.bind(this);
 
     // this.color =    this.getAttribute('color');
     // this.content =  this.getAttribute('content');
@@ -24,6 +24,50 @@ export class Note extends HTMLElement {
     this._removeBtn =    this.shadowRoot.getElementById('removeBtn');
     this._contentElm =   this.shadowRoot.getElementById('content');
     this._noteColorElm = this.shadowRoot.getElementById('noteColor');
+  }
+
+  get content() {
+    return this?._contentElm?.textContent || '';
+  }
+
+  set content(value) {
+    this._contentElm.textContent = value;
+  }
+
+  get color() {
+    const color = this.style.getPropertyValue('--note-bg-color');
+    return color;
+  }
+
+  set color(value = "#000") {
+    const fontColor = isLightColor(value) ? '#000' : '#fff';
+    this.style.setProperty("--note-bg-color", value);
+    this.style.setProperty("--font-color", fontColor);
+    
+    this._noteColorElm.value = value;
+  }
+
+  get position() {
+    console.log('GET Posiotn');
+    const {left, top} = this.style;
+    if (!(left || top)) return; 
+
+    const x = left;
+    const y = top;
+
+    return {x, y};
+  }
+
+  set position({x,y}) {
+    const posX = parseInt(x, 10);
+    const posY = parseInt(y, 10);
+    if (isNaN(posX) || isNaN(posY)) return;
+    
+    console.log('SET Posiotn', {x,y});
+    
+    this.style.top = y;
+    this.style.left = x;
+    this.style.position = 'absolute';
   }
 
   connectedCallback() {
@@ -40,59 +84,74 @@ export class Note extends HTMLElement {
   }
 
   _mouseMove(event) {
-    const noteContainer = this.parentElement;
     const newPosX = event.movementX;
     const newPosY = event.movementY;
-    const top = parseInt(noteContainer.style.top, 10);
+    const top = parseInt(this.style.top, 10);
     // Top dragging boundery
-    noteContainer.style.top = top <= 0 ? '0px' : noteContainer.style.top;
+    this.style.top = top <= 0 ? '0px' : this.style.top;
+    
+    const positionX = this.offsetLeft + newPosX;
+    const positionY = this.offsetTop + newPosY;
 
     // set the element's new position:
-    noteContainer.style.top = (noteContainer.offsetTop + newPosY) + "px";
-    noteContainer.style.left = (noteContainer.offsetLeft + newPosX) + "px";
-    noteContainer.style.position = 'absolute';
-    noteContainer.style.zIndex = 1;
-    noteContainer.style.opacity = .5;
+    this.style.left = (positionX) + "px";
+    this.style.top = (positionY) + "px";
+    this.style.position = 'absolute';
+    this.style.zIndex = 1;
+    this.style.opacity = .5;
   }
   
   _mouseUp() {
-    const noteContainer = this.parentElement;
-    noteContainer.style.opacity = 1;
+    this.style.opacity = 1;
     this._moveBtn.style.cursor = 'grab';
+    const x = this.style.left;
+    const y = this.style.top;
+    this.position = {x, y};
+
+    this._onUpdate();
     document.removeEventListener('mousemove', this._mouseMove);
     document.removeEventListener('mouseup', this._mouseUp);
   }
 
   disconnectedCallback() {
-    this._removeBtn.removeEventListener('click', this._removeNote);
-    this._contentElm.removeEventListener('input', debounce(this._onUpdate), 500);
-    this._noteColorElm.removeEventListener('change', this.onChangeColor);
-    this._moveBtn.removeEventListener('mousedown', this._mouseDown);
+    document.removeEventListener('mousemove', this._mouseMove);
+    document.removeEventListener('mouseup', this._mouseUp);
   }
-  // TODO: shot event to board
-  async _removeNote(event) {
-    await removeNote(this.boardId, this.id);
-    this.remove();
+  _removeNote() {
+    const removeEvent = new CustomEvent('removenote', {
+      detail: {
+        noteElm: this
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(removeEvent);
   }
 
-  async _onUpdate(){
-    await updateNote(this.boardId, this.id, { 
+  async _onUpdate() {
+    const noteData = { 
       content: this._contentElm.textContent, 
       color: this.color, 
       position: this.position
-    });
+    };
+
+    !noteData.position && delete noteData.position;
+
+    const updateEvent = new CustomEvent('updatenote', {
+      detail: {
+        noteData,
+        noteId: this.id
+      },
+      bubbles: true,
+      composed: true
+    })
+
+    this.dispatchEvent(updateEvent);
   }
 
-  async onChangeColor(event) {
+  async _onChangeColor(event) {
     this.color = event.target.value;
     this._onUpdate();
-  }
-
-  set color(value) {
-    const fontColor = isLightColor(value) ? '#000' : '#fff';
-
-    this.style.setProperty("--note-bg-color", value);
-    this.style.setProperty("--font-color", fontColor);
   }
 
   _render() {

@@ -16,7 +16,7 @@ export const NoteSchema = new Schema({
       default: '#fffacd',
     },
     position: {
-      type: String
+      type: {x: String, y: String}
     },
     createdAt : {
       type: Date,

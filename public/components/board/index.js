@@ -1,4 +1,4 @@
-import { getBoard, addNote } from "../../api/index.js";
+import { getBoard, addNote, removeNote, updateNote } from "../../api/index.js";
 
 class Board extends HTMLElement {
   constructor() {
@@ -13,6 +13,8 @@ class Board extends HTMLElement {
     this._headerTitle = this.shadowRoot.getElementById('headerTitle');
 
     this._addNote = this._addNote.bind(this);
+    this._removeNote = this._removeNote.bind(this);
+    this._updateNote = this._updateNote.bind(this);
     this._createAndAppendNote = this._createAndAppendNote.bind(this);
   }
 
@@ -27,10 +29,14 @@ class Board extends HTMLElement {
     });
 
     this._addNoteBtn.addEventListener('click', this._addNote);
+    this.addEventListener('removenote', this._removeNote);
+    this.addEventListener('updatenote', this._updateNote);
   }
 
   disconnectedCallback() {
     this._addNoteBtn.removeEventListener('click', this._addNote);
+    this.removeEventListener('removenote', this._removeNote);
+    this.removeEventListener('updatenote', this._updateNote);
   }
 
   async _addNote() {
@@ -38,11 +44,27 @@ class Board extends HTMLElement {
     this._createAndAppendNote({ id, color, content });
   }
 
-  _createAndAppendNote({_id: id, ...rest}) {
+  async _updateNote(event) {
+    const {noteId, noteData} = event.detail;
+    await updateNote(this._boardId, noteId, noteData);
+  }
+
+  async _removeNote(event) {
+    const {noteElm} = event.detail;
+    await removeNote(this._boardId, noteElm.id);
+
+    noteElm.remove();
+  }
+
+  _createAndAppendNote(note) {
     const notesContainer = this.shadowRoot.getElementById('notes');
-    const note = document.createElement('wc-note');
-    Object.assign(note, {id, ...rest});
-    notesContainer.appendChild(note);
+    const noteElm = document.createElement('wc-note');
+    const noteData  = {...note};
+    // if position is undeifined remove position property
+    !noteData.position && delete noteData.position;
+
+    Object.assign(noteElm, noteData);
+    notesContainer.appendChild(noteElm);
   }
 
   _render() {

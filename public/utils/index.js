@@ -30,3 +30,20 @@ export function generateUID() {
 
   return uid;
 }
+
+export function customElement(name) {
+  return function(target) {
+    customElements.define(name, target);
+  };
+}
+
+export function property(classPrototype, prop, descriptor) {
+  if (descriptor.initializer)
+    classPrototype['#' + prop] = descriptor.initializer();
+
+  delete descriptor.writable;
+  delete descriptor.initializer;
+
+  descriptor.get = function () { return this['#' + prop] };
+  descriptor.set = function (val) { this['#' + prop] = val };
+}
