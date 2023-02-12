@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - ./mongodb-data:/data/db
+    ports:
+      - 27018:27017
+    restart: unless-stopped
+
+# environment:
+#     - MONGO_INITDB_ROOT_USERNAME=<admin-user>
+#     - MONGO_INITDB_ROOT_PASSWORD=<admin-password>
+#     - MONGO_INITDB_DATABASE=<database to create>
