@@ -22,7 +22,7 @@ export class Note extends HTMLElement {
   }
 
   get content() {
-    return this?._contentElm?.textContent || '';
+    return this._contentElm.textContent || '';
   }
 
   set content(value) {
@@ -43,7 +43,6 @@ export class Note extends HTMLElement {
   }
 
   get position() {
-    console.log('GET Posiotn');
     const {left, top} = this.style;
     if (!(left || top)) return; 
 
@@ -57,8 +56,6 @@ export class Note extends HTMLElement {
     const posX = parseInt(x, 10);
     const posY = parseInt(y, 10);
     if (isNaN(posX) || isNaN(posY)) return;
-    
-    console.log('SET Posiotn', {x,y});
     
     this.style.top = y;
     this.style.left = x;
@@ -155,9 +152,7 @@ export class Note extends HTMLElement {
     this.shadowRoot.innerHTML= /* html */`
       <style>@import "../../components/note/style.css";</style>
       <article id="note" class="note"" >
-        <p dir="auto" contenteditable="true" id="content">
-          ${this.content}
-        </p>
+        <p dir="auto" contenteditable="true" id="content"/>
         <footer>
           <button style="cursor: grab;" id="moveBtn">👋🏻</button>
           <input title="Change note color" type="color" id="noteColor" name="color" value="${this.color}">
