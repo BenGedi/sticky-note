@@ -5,6 +5,10 @@
   --font-color: #000;
 }
 
+:host(:hover) {
+  z-index: 1 !important;
+}
+
 .note {
   width: 25rem;
   min-height: 30rem;
