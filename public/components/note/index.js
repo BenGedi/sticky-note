@@ -155,7 +155,7 @@ export class Note extends HTMLElement {
         <p dir="auto" contenteditable="true" id="content"/>
         <footer>
           <button style="cursor: grab;" id="moveBtn">👋🏻</button>
-          <input title="Change note color" type="color" id="noteColor" name="color" value="${this.color}">
+          <input title="Change note color" type="color" id="noteColor" name="color" />
           <button title="Delete note" id="removeBtn">🗑️</button>
         </footer>
       </article>

@@ -8,7 +8,7 @@
 .note {
   width: 25rem;
   min-height: 30rem;
-  border: 2px solid #fff;
+  border: 2px solid var(--font-color,#fff);
   border-radius: 6px;
   padding: 2rem;
   display: flex;
@@ -18,7 +18,7 @@
   background-color: var(--note-bg-color, yellow);
   position: relative;
 
-  transition-property: color, background-color; 
+  transition-property: color, background-color, border; 
   transition-duration: .3s; 
   transition-timing-function: ease-in-out;
 }
