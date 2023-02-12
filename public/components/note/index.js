@@ -102,6 +102,7 @@ export class Note extends HTMLElement {
     this._moveBtn.style.cursor = 'grab';
     const x = this.style.left;
     const y = this.style.top;
+    // incase position in undefined (as default there is no position set)
     this.position = {x, y};
 
     this._onUpdate();
