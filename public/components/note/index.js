@@ -5,11 +5,12 @@ export class Note extends HTMLElement {
     super();
     this.attachShadow({mode: 'open'});
 
-    this._mouseUp =      this._mouseUp.bind(this);
-    this._onUpdate =     this._onUpdate.bind(this);
-    this._mouseDown =    this._mouseDown.bind(this);
-    this._mouseMove =    this._mouseMove.bind(this);
-    this._removeNote =   this._removeNote.bind(this);
+    this._mouseUp =       this._mouseUp.bind(this);
+    this._onUpdate =      this._onUpdate.bind(this);
+    this._mouseDown =     this._mouseDown.bind(this);
+    this._mouseMove =     this._mouseMove.bind(this);
+    this._setColors =     this._setColors.bind(this);
+    this._removeNote =    this._removeNote.bind(this);
     this._onChangeColor = this._onChangeColor.bind(this);
 
     this._render();
@@ -18,6 +19,21 @@ export class Note extends HTMLElement {
     this._removeBtn =    this.shadowRoot.getElementById('removeBtn');
     this._contentElm =   this.shadowRoot.getElementById('content');
     this._noteColorElm = this.shadowRoot.getElementById('noteColor');
+  }
+
+  static get observedAttributes() {
+    return ['color'];
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if(oldVal === newVal) return;
+
+    ({
+      'color': () => {
+        this._setColors(newVal);
+        this._onUpdate();
+      }
+    })[name]();
   }
 
   get content() {
@@ -34,11 +50,7 @@ export class Note extends HTMLElement {
   }
 
   set color(value = "#000") {
-    const fontColor = isLightColor(value) ? '#000' : '#fff';
-    this.style.setProperty("--note-bg-color", value);
-    this.style.setProperty("--font-color", fontColor);
-    
-    this._noteColorElm.value = value;
+    this._setColors(value);
   }
 
   get position() {
@@ -109,7 +121,7 @@ export class Note extends HTMLElement {
     document.removeEventListener('mousemove', this._mouseMove);
     document.removeEventListener('mouseup', this._mouseUp);
   }
-
+// open pr in github from "master" branch to "main"
   _removeNote() {
     const removeEvent = new CustomEvent('removenote', {
       detail: {
@@ -146,6 +158,14 @@ export class Note extends HTMLElement {
     const value = event.target.value;
     this.color = value;
     this._onUpdate();
+  }
+
+  _setColors(value) {
+    const fontColor = isLightColor(value) ? '#000' : '#fff';
+    this.style.setProperty("--note-bg-color", value);
+    this.style.setProperty("--font-color", fontColor);
+    
+    this._noteColorElm.value = value;
   }
 
   _render() {
