@@ -19,6 +19,8 @@ header button {
   display: flex;
   flex-wrap: wrap;
   position: relative;
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .notes > div {

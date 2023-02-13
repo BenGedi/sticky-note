@@ -6,20 +6,23 @@ export class Note extends HTMLElement {
     this.attachShadow({mode: 'open'});
 
     this._mouseUp =       this._mouseUp.bind(this);
+    this._addFocus =      this._addFocus.bind(this);
     this._onUpdate =      this._onUpdate.bind(this);
     this._mouseDown =     this._mouseDown.bind(this);
     this._mouseMove =     this._mouseMove.bind(this);
     this._setColors =     this._setColors.bind(this);
     this._removeNote =    this._removeNote.bind(this);
+    this._removeFocus =   this._removeFocus.bind(this);
     this._setPosition =   this._setPosition.bind(this);
     this._onChangeColor = this._onChangeColor.bind(this);
     // create note template
     this._render();
 
-    this._moveBtn =      this.shadowRoot.getElementById('moveBtn');
-    this._removeBtn =    this.shadowRoot.getElementById('removeBtn');
-    this._contentElm =   this.shadowRoot.getElementById('content');
-    this._noteColorElm = this.shadowRoot.getElementById('noteColor');
+    this._moveBtn =       this.shadowRoot.getElementById('moveBtn');
+    this._removeBtn =     this.shadowRoot.getElementById('removeBtn');
+    this._contentElm =    this.shadowRoot.getElementById('content');
+    this._noteColorElm =  this.shadowRoot.getElementById('noteColor');
+    this._noteContinaer = this.shadowRoot.getElementById('note');
   }
 
   get content() {
@@ -70,10 +73,12 @@ export class Note extends HTMLElement {
   }
 
   connectedCallback() {
+    this._moveBtn.addEventListener('mousedown', this._mouseDown);
     this._removeBtn.addEventListener('click', this._removeNote);
     this._contentElm.addEventListener('input', debounce(this._onUpdate), 500);
+    this._contentElm.addEventListener('focus', this._addFocus);
+    this._contentElm.addEventListener('blur', this._removeFocus);
     this._noteColorElm.addEventListener('change', this._onChangeColor);
-    this._moveBtn.addEventListener('mousedown', this._mouseDown);
   }
 
   disconnectedCallback() {
@@ -165,6 +170,16 @@ export class Note extends HTMLElement {
     this.style.left = x;
     this.style.position = 'absolute';
     this.style.zIndex = 1;
+  }
+
+  _addFocus() {
+    this.style.zIndex = 3;
+    this._noteContinaer.classList.add('focus');
+  }
+
+  _removeFocus() {
+    this.style.zIndex = 1;
+    this._noteContinaer.classList.remove('focus');
   }
 
   _render() {
