@@ -174,7 +174,7 @@ export class Note extends HTMLElement {
   _render() {
     this.shadowRoot.innerHTML= /* html */`
       <style>@import "../../components/note/style.css";</style>
-      <article id="note" class="note"" >
+      <article id="note" class="note" >
         <p dir="auto" contenteditable="true" id="content"/>
         <footer>
           <button style="cursor: grab;" id="moveBtn">👋🏻</button>
