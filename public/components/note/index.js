@@ -13,7 +13,7 @@ export class Note extends HTMLElement {
     this._removeNote =    this._removeNote.bind(this);
     this._setPosition =   this._setPosition.bind(this);
     this._onChangeColor = this._onChangeColor.bind(this);
-
+    // create note template
     this._render();
 
     this._moveBtn =      this.shadowRoot.getElementById('moveBtn');
@@ -40,11 +40,8 @@ export class Note extends HTMLElement {
   }
 
   get position() {
-    const {left, top} = this.style;
-    if (!(left || top)) return; 
-
-    const x = left;
-    const y = top;
+    const { left: x, top: y } = this.style;
+    if (!(x || y)) return; 
 
     return {x, y};
   }
