@@ -22,21 +22,6 @@ export class Note extends HTMLElement {
     this._noteColorElm = this.shadowRoot.getElementById('noteColor');
   }
 
-  static get observedAttributes() {
-    return ['color'];
-  }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    if(oldVal === newVal) return;
-
-    ({
-      'color': () => {
-        this._setColors(newVal);
-        this._onUpdate();
-      }
-    })[name]();
-  }
-
   get content() {
     return this._contentElm.textContent || '';
   }
@@ -72,6 +57,21 @@ export class Note extends HTMLElement {
     this._setPosition(x,y);
   }
 
+  static get observedAttributes() {
+    return ['color'];
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if(oldVal === newVal) return;
+
+    ({
+      'color': () => {
+        this._setColors(newVal);
+        this._onUpdate();
+      }
+    })[name]();
+  }
+
   connectedCallback() {
     this._removeBtn.addEventListener('click', this._removeNote);
     this._contentElm.addEventListener('input', debounce(this._onUpdate), 500);
@@ -97,11 +97,11 @@ export class Note extends HTMLElement {
     // Top dragging boundery
     this.style.top = top <= 0 ? '0px' : this.style.top;
     
-    const positionX = this.offsetLeft + newPosX;
-    const positionY = this.offsetTop + newPosY;
+    const positionX = this.offsetLeft + newPosX + "px";
+    const positionY = this.offsetTop + newPosY + "px";
 
     // set the element's new position:
-    this._setPosition(positionX + "px",positionY + "px");
+    this._setPosition(positionX, positionY);
     this.style.opacity = .5;
   }
   
@@ -117,7 +117,7 @@ export class Note extends HTMLElement {
     document.removeEventListener('mousemove', this._mouseMove);
     document.removeEventListener('mouseup', this._mouseUp);
   }
-// open pr in github from "master" branch to "main"
+
   _removeNote() {
     const removeEvent = new CustomEvent('removenote', {
       detail: {
