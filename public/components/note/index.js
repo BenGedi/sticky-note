@@ -105,8 +105,7 @@ export class Note extends HTMLElement {
   _mouseUp() {
     this.style.opacity = 1;
     this._moveBtn.style.cursor = 'grab';
-    const x = this.style.left;
-    const y = this.style.top;
+    const {left: x, top: y} = this.style;
     // incase position in undefined (as default, there is no position set)
     this.position = {x, y};
 
